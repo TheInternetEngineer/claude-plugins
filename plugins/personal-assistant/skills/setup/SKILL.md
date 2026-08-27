@@ -7,6 +7,8 @@ description: Onboarding for personal-assistant — locates or creates the shared
 
 Establishes the one piece of state every other capability depends on: an **agent memory folder** — a shared, plugin-agnostic directory that any agent (this plugin or any other, Claude-based or not) can find and read through one convention: the `AGENT_MEMORY_PATH` environment variable.
 
+This isn't an operations log — it's meant to hold how the user thinks: ideas, reasoning, how they approach decisions. It deliberately doesn't hold operational detail (finances, project files, business systems) — those live in their own places. Keep that scope in mind when explaining this to the user during onboarding.
+
 The folder itself can be anything: a folder on the desktop, a project repo, or — recommended, since it makes the same memory available on every machine the user works from — a directory synced by Drive/Dropbox/iCloud desktop apps (in which case it just looks like an ordinary local folder here; no cloud connector needed). The user picks it; nothing about it is Drive-specific or personal-assistant-specific.
 
 ## 1. Discover the memory path
@@ -15,11 +17,13 @@ Check, in order, stopping at the first hit:
 
 1. **Environment variable** — run `echo "$AGENT_MEMORY_PATH"` (or equivalent). If it's set and non-empty, that's the memory path.
 2. **Local pointer file** — read `~/.agent-memory/root.json`. If it exists, it contains `{"agentMemoryPath": "<absolute path>"}`. This exists because a shell env var only becomes visible to *new* shells after step 3 below persists it — this file is the reliable fallback for the current and any other Claude Code session in the meantime.
-3. **Neither found — first run.** Ask the user for an absolute path. Two things can happen:
-   - They point at an existing `_agent-memory` folder (has `log.jsonl`/`log-schema.json` already) — use it as-is.
-   - They give any other folder (existing or new) — create an `_agent-memory` subfolder inside it, and the memory path is that subfolder.
+3. **Neither found — first run.** Don't jump straight to "where should I create it." Walk through this in order:
 
-   Mention it can be a Drive/Dropbox/iCloud-synced location, so the same memory is reachable from any machine that has that sync client signed in — that's the recommended default if they're not sure. Expand `~`. Create directories as needed once the user confirms.
+   a. **Ask if a memory already exists somewhere.** "Do you already have this set up somewhere — a previous setup, another computer, a synced folder you know the path to?" If yes, use that path as-is (it should already have `log.jsonl`/`log-schema.json`; if it's empty, confirm that's intentional before treating it as fresh).
+
+   b. **If not, advise on where to put a new one — before asking for a path.** Explain plainly: a plain local folder only lives on this machine — it won't be there if they work from another computer. A folder inside cloud-synced storage (Drive, Dropbox, iCloud Drive, etc.) is the same bytes replicated everywhere that sync account is signed in, so it's reachable from anywhere. Recommend the synced option unless they're sure this machine is the only place they'll ever use it.
+
+   c. **Ask for the absolute path**, given that advice. Expand `~`. Create an `_agent-memory` subfolder inside whatever they give you (unless they point straight at an existing `_agent-memory` folder — then use it as-is). Create directories as needed once confirmed.
 
    Once resolved, persist the path two ways so it's durable everywhere:
    - Write `~/.agent-memory/root.json` = `{"agentMemoryPath": "<path>"}` (takes effect immediately, this session).

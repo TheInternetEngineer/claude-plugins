@@ -1,6 +1,8 @@
 # _agent-memory
 
-A shared, plugin-agnostic memory folder. Any agent that can read files and run Python can use it — nothing here requires a specific plugin to be installed.
+This is the owner's own running record of how they think — ideas, the way they reason about decisions, how they approach what they're building. It is deliberately **not** an operations log: finances, project files, and business systems live in their own places, not here. An agent that reads this folder gains the owner's own thinking as context — closer to how a long-time personal assistant would know them than a database of tasks.
+
+It's shared and plugin-agnostic on purpose: any agent that can read files and run Python can use it — nothing here requires a specific plugin to be installed.
 
 **Finding this folder:** the `AGENT_MEMORY_PATH` environment variable points here. Any agent — Claude-based or not — should check that first. `~/.agent-memory/root.json` (`{"agentMemoryPath": "..."}`) is a same-session fallback for tools that can't see a freshly-set env var yet.
 
@@ -17,6 +19,7 @@ Fields per entry:
 - `tags` — optional list of free-form keywords
 - `first_seen` — ISO date (`YYYY-MM-DD`) the entry was first logged
 - `mentions` — list of ISO dates the same idea was logged again; more mentions means it came up more often — a useful signal when planning or prioritizing
+- `forgotten` / `forgotten_at` — present only once an entry has been removed via `forget` (see below). The line stays for audit purposes but is excluded from normal reads.
 
 ## log-schema.json
 
@@ -24,14 +27,19 @@ The registry of valid `field` values, each with a one-line `description`. Add ne
 
 ## scripts/log_tool.py
 
-Stdlib-only Python, no install step. Handles adding entries with fuzzy dedupe (a repeated idea bumps `mentions` instead of creating a duplicate) and searching. Usage:
+Stdlib-only Python, no install step. Handles adding, searching, and removing entries. Usage:
 
 ```bash
 python3 scripts/log_tool.py --file log.jsonl add --field idea --content "..." --tags "a,b"
 python3 scripts/log_tool.py --file log.jsonl search --query "..."
+python3 scripts/log_tool.py --file log.jsonl forget --id <id>
 ```
 
-Always go through this script to add or search entries — hand-editing the file skips deduping.
+- `add` fuzzy-dedupes: a repeated idea bumps `mentions` instead of creating a duplicate.
+- `search` excludes forgotten entries by default (`--include-forgotten` to see them).
+- `forget` soft-deletes by id only — it never guesses which entry to remove from a text query, so resolve the id via `search` first.
+
+Always go through this script rather than hand-editing the file — hand-editing skips deduping and the forgotten-entry bookkeeping.
 
 ## context.json
 

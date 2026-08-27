@@ -14,9 +14,9 @@
     },
     {
       "name": "personal-assistant",
-      "version": "0.4.0",
+      "version": "0.5.0",
       "source": "./plugins/personal-assistant",
-      "description": "Captures ideas, tasks, and observations into a shared, plugin-agnostic memory folder (_agent-memory) that any agent can recall from when planning and making decisions — extensible with new log fields and capabilities over time."
+      "description": "Keeps a running record of how the owner thinks — ideas, reasoning, how they approach what they're building — in a shared, plugin-agnostic memory folder any agent can read (found via AGENT_MEMORY_PATH) and act from. Not an operations log — extensible with new log fields and capabilities over time."
     }
   ]
 }

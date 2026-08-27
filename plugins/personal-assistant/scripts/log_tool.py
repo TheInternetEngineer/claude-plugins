@@ -37,7 +37,7 @@ def find_similar(entries, field, content, threshold):
     norm_content = normalize(content)
     best, best_ratio = None, 0.0
     for e in entries:
-        if e.get("field") != field:
+        if e.get("field") != field or e.get("forgotten"):
             continue
         ratio = difflib.SequenceMatcher(None, norm_content, normalize(e.get("content", ""))).ratio()
         if ratio > best_ratio:
@@ -101,6 +101,8 @@ def cmd_search(args):
     entries = load_entries(args.file)
     results = []
     for e in entries:
+        if not args.include_forgotten and e.get("forgotten"):
+            continue
         if args.id and e["id"] != args.id:
             continue
         if args.field and e.get("field") != args.field:
@@ -111,6 +113,21 @@ def cmd_search(args):
         results.append(e)
     results.sort(key=lambda e: len(e.get("mentions", [])), reverse=True)
     print(json.dumps(results))
+
+
+def cmd_forget(args):
+    entries = load_entries(args.file)
+    target = next((e for e in entries if e["id"] == args.id), None)
+    if target is None:
+        print(json.dumps({"action": "not_found", "id": args.id}))
+        return
+    if target.get("forgotten"):
+        print(json.dumps({"action": "already_forgotten", "id": target["id"], "content": target["content"]}))
+        return
+    target["forgotten"] = True
+    target["forgotten_at"] = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    save_entries(args.file, entries)
+    print(json.dumps({"action": "forgotten", "id": target["id"], "content": target["content"]}))
 
 
 def main():
@@ -130,7 +147,12 @@ def main():
     p_search.add_argument("--field", default=None)
     p_search.add_argument("--id", default=None)
     p_search.add_argument("--threshold", type=float, default=0.5)
+    p_search.add_argument("--include-forgotten", action="store_true", help="include entries previously removed via forget")
     p_search.set_defaults(func=cmd_search)
+
+    p_forget = sub.add_parser("forget", help="soft-delete an entry by id (marks it forgotten, never erases the line)")
+    p_forget.add_argument("--id", required=True)
+    p_forget.set_defaults(func=cmd_forget)
 
     args = parser.parse_args()
     args.func(args)
