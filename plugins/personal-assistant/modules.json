@@ -34,5 +34,11 @@
     "description": "Reads or searches the shared _agent-memory log and answers in plain language. Read-only.",
     "required_fields": [],
     "depends_on": []
+  },
+  "pa": {
+    "tier": "super-skill",
+    "description": "General entry point — loads relevant context, routes to an existing capability or handles the task directly, and decides at the end whether to log the outcome to shared agent-memory.",
+    "required_fields": [],
+    "depends_on": []
   }
 }
