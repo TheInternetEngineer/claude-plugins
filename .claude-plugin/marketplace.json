@@ -8,13 +8,13 @@
   "plugins": [
     {
       "name": "business-manager",
-      "version": "0.4.0",
+      "version": "0.5.0",
       "source": "./plugins/business-manager",
-      "description": "Runs the day-to-day operations of an AI education agency — content, campaigns, education/community, and client work — with persistent state in a shared _business-memory folder (local, Drive-synced, or any other cloud-synced location, found via BUSINESS_MEMORY_PATH) any agent can read for recurring client/campaign/positioning context, plus business-manager's own private config and working files namespaced within it."
+      "description": "Runs the day-to-day operations of an AI education agency — content, campaigns, education/community, and client work — with persistent state in a shared _business-memory folder (local, Drive-synced, or any other cloud-synced location, found via BUSINESS_MEMORY_PATH) any agent can read for recurring client/campaign/positioning/resource-location context, plus business-manager's own private config and working files namespaced within it."
     },
     {
       "name": "personal-assistant",
-      "version": "0.6.1",
+      "version": "0.6.2",
       "source": "./plugins/personal-assistant",
       "description": "Keeps a running record of how the owner thinks — ideas, reasoning, how they approach what they're building — in a shared, plugin-agnostic memory folder any agent can read (found via AGENT_MEMORY_PATH) and act from. Not an operations log — extensible with new log fields and capabilities over time."
     }

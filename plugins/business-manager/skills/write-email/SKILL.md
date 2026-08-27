@@ -31,37 +31,51 @@ Search `<businessMemoryPath>/log.jsonl` for anything relevant before writing a w
 python3 <businessMemoryPath>/scripts/log_tool.py --file <businessMemoryPath>/log.jsonl search --query "<audience/client name or topic>"
 ```
 
-Look especially for `client-preference` entries about the named audience (tone/format they've asked for before) and `positioning-decision` entries relevant to the message. Fold anything relevant into the draft.
+Look especially for `client-preference` entries about the named audience (tone/format they've asked for before), `positioning-decision` entries relevant to the message, and any `resource-location` entry that might matter (e.g. a client asset folder to reference). Fold anything relevant into the draft.
 
-## 4. Load business-manager's own context
+## 4. Check this skill's own history
 
-- Read `<businessMemoryPath>/business-manager/brand-guide.md` if it exists, for voice/tone. If it doesn't exist yet, proceed with a clear, direct professional tone and note in your output that no brand guide is on file.
-- Read `<businessMemoryPath>/business-manager/memory/emails.md` if it exists — skim for prior angles/subject lines on the same purpose or campaign so this email doesn't repeat one already sent. (This is business-manager's own record of what it's written, distinct from the shared `log.jsonl` checked in step 3.)
+business-manager keeps its own private, per-capability index — same tool as step 3, pointed at a private file instead of the shared one:
 
-## 5. Write the email
+```bash
+python3 <businessMemoryPath>/scripts/log_tool.py --file <businessMemoryPath>/business-manager/memory/write-email.jsonl search --query "<purpose/audience/campaign>"
+```
+
+This is write-email's own record of what it's already written (distinct from the shared judgment in step 3) — skim results so this email doesn't repeat an angle or subject line already used for the same purpose/campaign. The file won't exist on the first run; that's fine, treat it as no prior history.
+
+## 5. Load business-manager's own context
+
+Read `<businessMemoryPath>/business-manager/brand-guide.md` if it exists, for voice/tone. If it doesn't exist yet, proceed with a clear, direct professional tone and note in your output that no brand guide is on file.
+
+## 6. Write the email
 
 - One subject line (plus 1-2 alternates if useful)
 - Body matching brand voice, sized to purpose (outreach = short; nurture/launch = can be longer)
 - Exactly one clear call to action
 - Sender sign-off using `senderName` / `businessName` from config
 
-## 6. Save and log — own memory
+## 7. Save the output
 
-- Save the email to `<businessMemoryPath>/business-manager/outputs/emails/<short-slug>.md`
-- Append one line to `<businessMemoryPath>/business-manager/memory/emails.md`: date, purpose, audience, subject line, output path — so future invocations (any session, any surface) know this angle has been used
-- Create `business-manager/memory/emails.md` with a one-line header if it doesn't exist yet
+Save the full email to `<businessMemoryPath>/business-manager/outputs/emails/<short-slug>.md`.
 
-## 7. Log to shared business-memory, if warranted
+## 8. Update this skill's own index
 
-Use judgment — don't log routine email metadata (that's step 6's job). Only log something here if the brief or your draft surfaced a fact worth any agent knowing later: a client preference stated for the first time, a positioning/messaging decision, a campaign learning.
+```bash
+python3 <businessMemoryPath>/scripts/log_tool.py --file <businessMemoryPath>/business-manager/memory/write-email.jsonl add \
+  --field "sent" --content "<purpose> — <audience> — subject: <subject line>" --tags "<audience-or-client>,<campaign-if-any>"
+```
+
+`sent` is this private index's only field — it doesn't need `bm-add-log-field`/schema validation since it's not shared. Include the output path from step 7 in `--content` so a later search surfaces where the full email lives.
+
+## 9. Log to shared business-memory, if warranted
+
+Separate from step 8 — use judgment, don't log routine metadata here. Only log something if the brief or your draft surfaced a fact worth any agent knowing later: a client preference stated for the first time, a positioning/messaging decision, a campaign learning, or a resource location mentioned in passing.
 
 ```bash
 python3 <businessMemoryPath>/scripts/log_tool.py --file <businessMemoryPath>/log.jsonl add \
-  --field "<client-preference|campaign-learning|positioning-decision>" --content "<content>" --tags "<comma,separated,tags>"
+  --field "<client-preference|campaign-learning|positioning-decision|resource-location>" --content "<content>" --tags "<comma,separated,tags>"
 ```
 
-If the field isn't registered yet, mention that to the user rather than guessing at a new one — `bm-add-log-field` handles that.
-
-## 8. Return
+## 10. Return
 
 Show the finished email in the chat, plus the path it was saved to, plus a one-line note if anything was also logged to shared business-memory.

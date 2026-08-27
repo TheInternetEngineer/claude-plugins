@@ -1,6 +1,6 @@
 ---
 name: bm-log
-description: Captures a structured entry (client preference, campaign learning, positioning decision, etc.) into the shared _business-memory log, so it can be recalled later during planning, client work, or content decisions — by this plugin or any other agent reading the same folder. Triggers on "log this client preference", "remember this for future campaigns", "add this to business memory", "log a positioning decision".
+description: Captures a structured entry (client preference, campaign learning, positioning decision, where a business folder/file lives, etc.) into the shared _business-memory log, so it can be recalled later during planning, client work, or content decisions — by this plugin or any other agent reading the same folder. Triggers on "log this client preference", "remember this for future campaigns", "add this to business memory", "log a positioning decision", "this is where our invoices/contracts/assets are", "remember this folder", "point business manager at this folder for X".
 ---
 
 # Log
@@ -15,8 +15,8 @@ Resolve `<businessMemoryPath>`: check the `BUSINESS_MEMORY_PATH` environment var
 
 The user typically won't hand you a ready-made entry — they'll think out loud about a client, a campaign result, or a decision, and you extract what's worth remembering from that. Before writing anything:
 - **Content** — condense the relevant part into a clear, structured entry (not a verbatim transcript, but don't lose the specifics that make it useful later)
-- **Field/type** — what kind of entry this is (e.g. `client-preference`, `campaign-learning`, `positioning-decision`). Infer it from context when obvious; ask only when genuinely ambiguous between two registered fields
-- **Tags** (optional) — free-form keywords for later filtering (e.g. a client name, a campaign name)
+- **Field/type** — what kind of entry this is (e.g. `client-preference`, `campaign-learning`, `positioning-decision`, `resource-location`). Infer it from context when obvious; ask only when genuinely ambiguous between two registered fields
+- **Tags** (optional) — free-form keywords for later filtering (e.g. a client name, a campaign name). For `resource-location` entries, always tag with a short handle for the thing itself (e.g. `invoices-folder`) so a later lookup can search by that handle directly.
 
 Show the user the distilled entry (content + field) before writing it, unless they've already confirmed what to log in the same breath. Only append once you have a clear go-ahead.
 

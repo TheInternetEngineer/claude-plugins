@@ -35,14 +35,21 @@ Add an entry to `modules.json`:
 
 ## 4. Scaffold the skill file
 
-Create `skills/<name>/SKILL.md` following the same shape as `write-email`:
+Create `skills/<name>/SKILL.md` following the same shape as `write-email` — this is the standard template for any capability that produces a deliverable; don't improvise a different storage pattern per capability:
+
 1. Frontmatter: `name`, `description` (with trigger phrases)
-2. Gate-check section — resolves `<businessMemoryPath>` (check `BUSINESS_MEMORY_PATH` env var, then `~/.business-memory/root.json`), then reads this plugin's `<businessMemoryPath>/business-manager.config.json`, checks this capability's `required_fields`, stops with what's missing if incomplete
+2. Gate-check section — resolves `<businessMemoryPath>` (check `BUSINESS_MEMORY_PATH` env var, then `~/.business-memory/root.json`), then reads `<businessMemoryPath>/business-manager.config.json`, checks this capability's `required_fields`, stops with what's missing if incomplete
 3. Gather-inputs section — what the invocation itself must supply
-4. Load-context section — brand guide (if relevant, at `<businessMemoryPath>/business-manager/brand-guide.md`) + any `depends_on` capability's output (e.g. the shared `<businessMemoryPath>/log.jsonl`) + this plugin's own `<businessMemoryPath>/business-manager/memory/<name>.md` for prior work
-5. Do-the-work section — **leave as a clearly marked placeholder** naming the actual task logic still to be written; don't invent it
-6. Save-and-log section — output to `<businessMemoryPath>/business-manager/outputs/<name>/`, append to `<businessMemoryPath>/business-manager/memory/<name>.md`. Keep new capabilities' own working files under the `business-manager/` subfolder (private) — only `log.jsonl`/`log-schema.json` at the top of `<businessMemoryPath>` are the shared, cross-agent surface; don't add new capabilities' output there unless it's genuinely meant for other agents to read too.
-7. Return section — show the result in chat plus the file's path
+4. Check-shared-business-memory section — search `<businessMemoryPath>/log.jsonl` (via `log_tool.py search`) for relevant `client-preference`/`positioning-decision`/`resource-location`/etc. entries before acting. Don't ask the user where something lives without checking `resource-location` entries first.
+5. Check-own-history section — search this capability's own private index, `<businessMemoryPath>/business-manager/memory/<name>.jsonl` (via the **same** `log_tool.py`, just pointed at this file instead of the shared one — never a bespoke hand-written log format), for prior work on the same topic. Won't exist on first run; treat that as no history.
+6. Load-other-context section — brand guide (if relevant, at `<businessMemoryPath>/business-manager/brand-guide.md`) + any `depends_on` capability's output
+7. Do-the-work section — **leave as a clearly marked placeholder** naming the actual task logic still to be written; don't invent it
+8. Save-output section — the finished deliverable to `<businessMemoryPath>/business-manager/outputs/<name>/`
+9. Update-own-index section — `log_tool.py add --file <businessMemoryPath>/business-manager/memory/<name>.jsonl` with a short field (e.g. `"done"`) summarizing what happened and the output path. This is a private index — it doesn't need `bm-add-log-field`/schema registration.
+10. Log-to-shared-memory section (judgment call, not automatic) — only if something surfaced is worth any agent knowing later, via `log_tool.py add --file <businessMemoryPath>/log.jsonl`
+11. Return section — show the result in chat, the output path, and a note if anything was logged to shared business-memory
+
+Only `log.jsonl`/`log-schema.json` at the top of `<businessMemoryPath>` are the shared, cross-agent surface — everything under `business-manager/` is private to this plugin.
 
 ## 5. Report
 

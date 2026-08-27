@@ -1,7 +1,7 @@
 {
   "name": "business-manager",
-  "version": "0.4.0",
-  "description": "Runs the day-to-day operations of an AI education agency — content, campaigns, education/community, and client work — with persistent state in a shared _business-memory folder (local, Drive-synced, or any other cloud-synced location, found via BUSINESS_MEMORY_PATH) any agent can read for recurring client/campaign/positioning context, plus business-manager's own private config and working files namespaced within it.",
+  "version": "0.5.0",
+  "description": "Runs the day-to-day operations of an AI education agency — content, campaigns, education/community, and client work — with persistent state in a shared _business-memory folder (local, Drive-synced, or any other cloud-synced location, found via BUSINESS_MEMORY_PATH) any agent can read for recurring client/campaign/positioning/resource-location context, plus business-manager's own private config and working files namespaced within it.",
   "author": {
     "name": "Jordi"
   },

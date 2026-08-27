@@ -35,14 +35,20 @@ Add an entry to `modules.json`:
 
 ## 4. Scaffold the skill file
 
-Create `skills/<name>/SKILL.md` following the same shape as `pa-log`:
+Create `skills/<name>/SKILL.md` — for any capability that produces a deliverable, this is the standard template; don't improvise a different storage pattern per capability:
+
 1. Frontmatter: `name`, `description` (with trigger phrases)
-2. Gate-check section — resolves `<agentMemoryPath>` (check `AGENT_MEMORY_PATH` env var, then `~/.agent-memory/root.json`), then reads this plugin's `<agentMemoryPath>/personal-assistant.config.json`, checks this capability's `required_fields`, stops with what's missing if incomplete
+2. Gate-check section — resolves `<agentMemoryPath>` (check `AGENT_MEMORY_PATH` env var, then `~/.agent-memory/root.json`), then reads `<agentMemoryPath>/personal-assistant.config.json`, checks this capability's `required_fields`, stops with what's missing if incomplete
 3. Gather-inputs section — what the invocation itself must supply
-4. Load-context section — any `depends_on` capability's output (e.g. the shared `<agentMemoryPath>/log.jsonl`) + this plugin's own `<agentMemoryPath>/personal-assistant/memory/<name>.md` for prior work
-5. Do-the-work section — **leave as a clearly marked placeholder** naming the actual task logic still to be written; don't invent it
-6. Save-and-log section — output to `<agentMemoryPath>/personal-assistant/outputs/<name>/`, append to `<agentMemoryPath>/personal-assistant/memory/<name>.md`. Keep new capabilities' own working files under the `personal-assistant/` subfolder (private) — only `log.jsonl`/`log-schema.json` at the top of `<agentMemoryPath>` are the shared, cross-agent surface; don't add new capabilities' output there unless it's genuinely meant for other agents to read too.
-7. Return section — show the result in chat plus the file path it was saved to
+4. Check-shared-memory section — search `<agentMemoryPath>/log.jsonl` (via `log_tool.py search`) for relevant prior entries before acting
+5. Check-own-history section — search this capability's own private index, `<agentMemoryPath>/personal-assistant/memory/<name>.jsonl` (via the **same** `log_tool.py`, just pointed at this file instead of the shared one — never a bespoke hand-written log format), for prior work on the same topic. Won't exist on first run; treat that as no history.
+6. Load-other-context section — any `depends_on` capability's output
+7. Do-the-work section — **leave as a clearly marked placeholder** naming the actual task logic still to be written; don't invent it
+8. Save-output section — the finished deliverable to `<agentMemoryPath>/personal-assistant/outputs/<name>/`
+9. Update-own-index section — `log_tool.py add --file <agentMemoryPath>/personal-assistant/memory/<name>.jsonl` with a short field (e.g. `"done"`) summarizing what happened and the output path. This is a private index — it doesn't need `pa-add-log-field`/schema registration.
+10. Return section — show the result in chat plus the file path it was saved to
+
+Only `log.jsonl`/`log-schema.json` at the top of `<agentMemoryPath>` are the shared, cross-agent surface — everything under `personal-assistant/` is private to this plugin.
 
 ## 5. Report
 
