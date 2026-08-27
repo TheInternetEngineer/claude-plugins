@@ -9,7 +9,7 @@ Appends one structured entry to the shared, persistent log. This is the capture 
 
 ## 1. Gate-check root
 
-Read `~/.agent-memory/root.json` for `workingFolder`. If it doesn't exist, or `<workingFolder>/_agent-memory/` doesn't exist, stop and tell the user to run `setup` first.
+Resolve `<agentMemoryPath>`: check the `AGENT_MEMORY_PATH` environment variable first, then `~/.agent-memory/root.json`. If neither is set, or the resolved folder is missing `log-schema.json`, stop and tell the user to run `setup` first.
 
 ## 2. Distill from conversation
 
@@ -22,7 +22,7 @@ Show the user the distilled entry (content + field) before writing it, unless th
 
 ## 3. Validate the field
 
-Read `<workingFolder>/_agent-memory/log-schema.json` — the live, shared schema (not the plugin repo's copy, which is only the first-run seed).
+Read `<agentMemoryPath>/log-schema.json` — the live, shared schema (not the plugin repo's copy, which is only the first-run seed).
 
 - If the requested field is registered, proceed.
 - If it isn't, tell the user it's not a registered field, offer to register it now via `add-log-field`, or fall back to `idea` if they'd rather not create a new one.
@@ -32,7 +32,7 @@ Read `<workingFolder>/_agent-memory/log-schema.json` — the live, shared schema
 Do not read the log and rewrite it yourself, and do not compose the JSON line by hand. As the log grows that costs more tokens and more time on every single entry, and it can't dedupe. Use the copy of `log_tool.py` that lives inside the shared folder (not the plugin repo's copy) — this keeps the folder self-contained for other agents:
 
 ```bash
-python3 <workingFolder>/_agent-memory/scripts/log_tool.py --file <workingFolder>/_agent-memory/log.jsonl add \
+python3 <agentMemoryPath>/scripts/log_tool.py --file <agentMemoryPath>/log.jsonl add \
   --field "<field>" --content "<content>" --tags "<comma,separated,tags>"
 ```
 

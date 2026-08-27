@@ -9,7 +9,7 @@ Extends what `log` (and any other agent reading the same shared folder) can capt
 
 ## 1. Gate-check root
 
-Read `~/.agent-memory/root.json` for `workingFolder`. If it doesn't exist, or `<workingFolder>/_agent-memory/` doesn't exist, stop and tell the user to run `setup` first.
+Resolve `<agentMemoryPath>`: check the `AGENT_MEMORY_PATH` environment variable first, then `~/.agent-memory/root.json`. If neither is set, or the resolved folder is missing `log-schema.json`, stop and tell the user to run `setup` first.
 
 ## 2. Interview
 
@@ -19,11 +19,11 @@ Ask for, in one pass:
 
 ## 3. Check for collisions
 
-Read `<workingFolder>/_agent-memory/log-schema.json` — the shared, live schema, not the plugin repo's copy (that one is only the first-run seed). If the field name already exists, stop and ask whether they want a different name or to update the existing field's description instead.
+Read `<agentMemoryPath>/log-schema.json` — the shared, live schema, not the plugin repo's copy (that one is only the first-run seed). If the field name already exists, stop and ask whether they want a different name or to update the existing field's description instead.
 
 ## 4. Register
 
-Add an entry to `<workingFolder>/_agent-memory/log-schema.json`:
+Add an entry to `<agentMemoryPath>/log-schema.json`:
 ```json
 "<field-name>": {
   "description": "<one-line description>"

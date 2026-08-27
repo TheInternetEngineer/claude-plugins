@@ -37,11 +37,11 @@ Add an entry to `modules.json`:
 
 Create `skills/<name>/SKILL.md` following the same shape as `log`:
 1. Frontmatter: `name`, `description` (with trigger phrases)
-2. Gate-check section — reads `~/.agent-memory/root.json` for `workingFolder`, then this plugin's `<workingFolder>/_agent-memory/personal-assistant.config.json`, checks this capability's `required_fields`, stops with what's missing if incomplete
+2. Gate-check section — resolves `<agentMemoryPath>` (check `AGENT_MEMORY_PATH` env var, then `~/.agent-memory/root.json`), then reads this plugin's `<agentMemoryPath>/personal-assistant.config.json`, checks this capability's `required_fields`, stops with what's missing if incomplete
 3. Gather-inputs section — what the invocation itself must supply
-4. Load-context section — any `depends_on` capability's output (e.g. the shared `<workingFolder>/_agent-memory/log.jsonl`) + this plugin's own `<workingFolder>/_agent-memory/personal-assistant/memory/<name>.md` for prior work
+4. Load-context section — any `depends_on` capability's output (e.g. the shared `<agentMemoryPath>/log.jsonl`) + this plugin's own `<agentMemoryPath>/personal-assistant/memory/<name>.md` for prior work
 5. Do-the-work section — **leave as a clearly marked placeholder** naming the actual task logic still to be written; don't invent it
-6. Save-and-log section — output to `<workingFolder>/_agent-memory/personal-assistant/outputs/<name>/`, append to `<workingFolder>/_agent-memory/personal-assistant/memory/<name>.md`. Keep new capabilities' own working files under the `personal-assistant/` subfolder (private) — only `log.jsonl`/`log-schema.json` at the top of `_agent-memory/` are the shared, cross-agent surface; don't add new capabilities' output there unless it's genuinely meant for other agents to read too.
+6. Save-and-log section — output to `<agentMemoryPath>/personal-assistant/outputs/<name>/`, append to `<agentMemoryPath>/personal-assistant/memory/<name>.md`. Keep new capabilities' own working files under the `personal-assistant/` subfolder (private) — only `log.jsonl`/`log-schema.json` at the top of `<agentMemoryPath>` are the shared, cross-agent surface; don't add new capabilities' output there unless it's genuinely meant for other agents to read too.
 7. Return section — show the result in chat plus the file path it was saved to
 
 ## 5. Report

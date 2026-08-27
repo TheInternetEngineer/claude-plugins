@@ -2,6 +2,10 @@
 
 A shared, plugin-agnostic memory folder. Any agent that can read files and run Python can use it — nothing here requires a specific plugin to be installed.
 
+**Finding this folder:** the `AGENT_MEMORY_PATH` environment variable points here. Any agent — Claude-based or not — should check that first. `~/.agent-memory/root.json` (`{"agentMemoryPath": "..."}`) is a same-session fallback for tools that can't see a freshly-set env var yet.
+
+**Across machines:** if this folder lives inside a Drive/Dropbox/iCloud-synced directory, the same memory is available on every machine with that sync client signed in — just re-run `setup` there to point that machine's `AGENT_MEMORY_PATH` at the local sync path. The data itself is only as secure as that sync account (2FA recommended); this folder should never be committed to a public git repo.
+
 ## log.jsonl
 
 One JSON object per line. Append-only; existing lines are only ever updated to add a mention date (see below) — never delete or reorder lines by hand.
@@ -31,7 +35,7 @@ Always go through this script to add or search entries — hand-editing the file
 
 ## context.json
 
-`{"instructionsFile": "<relative path or null>"}` — if the working folder (the parent of this one) has a `CLAUDE.md`, `AGENTS.md`, or `README.md` describing how the broader system/folder is organized, its path is recorded here so any agent can find it without re-discovering it.
+`{"instructionsFile": "<path or null>"}` — if the parent of this folder has a `CLAUDE.md`, `AGENTS.md`, or `README.md` describing how the broader system/folder is organized, its path is recorded here so any agent can find it without re-discovering it.
 
 ## Ownership convention
 
