@@ -1,0 +1,11 @@
+{
+  "client-preference": {
+    "description": "A specific preference or requirement a client has expressed, worth remembering for future work with them."
+  },
+  "campaign-learning": {
+    "description": "Something learned about what worked or didn't in a campaign, worth applying to future ones."
+  },
+  "positioning-decision": {
+    "description": "A decision about how the business positions itself, a product, or an offer."
+  }
+}

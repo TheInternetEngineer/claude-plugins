@@ -1,7 +1,7 @@
 {
   "name": "business-manager",
-  "version": "0.1.0",
-  "description": "Runs the day-to-day operations of an AI education agency — content, campaigns, education/community, and client work — with persistent state on Google Drive.",
+  "version": "0.2.0",
+  "description": "Runs the day-to-day operations of an AI education agency — content, campaigns, education/community, and client work — with persistent state on Google Drive, plus a shared _business-memory folder (found via BUSINESS_MEMORY_PATH) any agent can read for recurring client/campaign/positioning context.",
   "author": {
     "name": "Jordi"
   },
