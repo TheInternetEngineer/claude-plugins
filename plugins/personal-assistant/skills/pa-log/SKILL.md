@@ -1,5 +1,5 @@
 ---
-name: log
+name: pa-log
 description: Captures a structured entry (idea, task, observation, etc.) into the shared _agent-memory log, so it can be recalled later during planning, scheduling, or decision-making — by this plugin or any other agent reading the same folder. Triggers on "log this idea", "add this to my log", "remember this for planning", "log an idea about X".
 ---
 
@@ -9,7 +9,7 @@ Appends one structured entry to the shared, persistent log. This is the capture 
 
 ## 1. Gate-check root
 
-Resolve `<agentMemoryPath>`: check the `AGENT_MEMORY_PATH` environment variable first, then `~/.agent-memory/root.json`. If neither is set, or the resolved folder is missing `log-schema.json`, stop and tell the user to run `setup` first.
+Resolve `<agentMemoryPath>`: check the `AGENT_MEMORY_PATH` environment variable first, then `~/.agent-memory/root.json`. If neither is set, or the resolved folder is missing `log-schema.json`, stop and tell the user to run `pa-setup` first.
 
 ## 2. Distill from conversation
 
@@ -25,7 +25,7 @@ Show the user the distilled entry (content + field) before writing it, unless th
 Read `<agentMemoryPath>/log-schema.json` — the live, shared schema (not the plugin repo's copy, which is only the first-run seed).
 
 - If the requested field is registered, proceed.
-- If it isn't, tell the user it's not a registered field, offer to register it now via `add-log-field`, or fall back to `idea` if they'd rather not create a new one.
+- If it isn't, tell the user it's not a registered field, offer to register it now via `pa-add-log-field`, or fall back to `idea` if they'd rather not create a new one.
 
 ## 4. Add via the script — never hand-append
 

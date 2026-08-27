@@ -1,11 +1,11 @@
 {
-  "setup": {
+  "bm-setup": {
     "tier": "skill",
-    "description": "Onboarding — locates/creates the Drive business root and the shared _business-memory folder, and collects required fields for every registered capability.",
+    "description": "Onboarding — locates/creates the shared _business-memory folder and business-manager's own config within it, and collects required fields for every registered capability.",
     "required_fields": [],
     "depends_on": []
   },
-  "add-func": {
+  "bm-add-func": {
     "tier": "skill",
     "description": "Adds a new capability to business-manager — registers it in modules.json and scaffolds its skill file.",
     "required_fields": [],
@@ -17,19 +17,19 @@
     "required_fields": ["senderName", "businessName"],
     "depends_on": []
   },
-  "log": {
+  "bm-log": {
     "tier": "skill",
     "description": "Captures a structured entry (client preference, campaign learning, positioning decision, etc.) into the shared _business-memory log for later recall.",
     "required_fields": [],
     "depends_on": []
   },
-  "add-log-field": {
+  "bm-add-log-field": {
     "tier": "skill",
     "description": "Registers a new log field/category in the shared _business-memory log schema so future log entries can use it.",
     "required_fields": [],
     "depends_on": []
   },
-  "forget": {
+  "bm-forget": {
     "tier": "skill",
     "description": "Soft-deletes an entry from the _business-memory log (marks it forgotten rather than erasing it) when it's outdated, mistaken, or no longer relevant.",
     "required_fields": [],

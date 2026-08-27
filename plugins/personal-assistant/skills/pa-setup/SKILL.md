@@ -1,5 +1,5 @@
 ---
-name: setup
+name: pa-setup
 description: Onboarding for personal-assistant — locates or creates the shared _agent-memory folder via the AGENT_MEMORY_PATH environment variable, and collects the required fields for every registered capability so they can activate. Triggers on "set up personal assistant", "run setup", "configure personal assistant", or first use of any other personal-assistant capability that reports missing config.
 ---
 
@@ -37,7 +37,7 @@ Check, in order, stopping at the first hit:
 ## 2. Locate or create the memory folder's contents
 
 At `<agentMemoryPath>/`, if it's empty or missing these files, create:
-- `log-schema.json` — copy this plugin's `log-schema.json` (repo root) as the seed. From now on `add-log-field` edits this copy, not the plugin repo's.
+- `log-schema.json` — copy this plugin's `log-schema.json` (repo root) as the seed. From now on `pa-add-log-field` edits this copy, not the plugin repo's.
 - `scripts/log_tool.py` — copy this plugin's `scripts/log_tool.py`, so the folder is self-contained and usable by any agent even without this plugin installed.
 - `README.md` — copy this plugin's `templates/AGENT-MEMORY-README.md`.
 - `context.json` — `{"instructionsFile": null}` (filled in by step 3).

@@ -6,7 +6,7 @@ It's shared and plugin-agnostic on purpose: any agent that can read files and ru
 
 **Finding this folder:** the `AGENT_MEMORY_PATH` environment variable points here. Any agent — Claude-based or not — should check that first. `~/.agent-memory/root.json` (`{"agentMemoryPath": "..."}`) is a same-session fallback for tools that can't see a freshly-set env var yet.
 
-**Across machines:** if this folder lives inside a Drive/Dropbox/iCloud-synced directory, the same memory is available on every machine with that sync client signed in — just re-run `setup` there to point that machine's `AGENT_MEMORY_PATH` at the local sync path. The data itself is only as secure as that sync account (2FA recommended); this folder should never be committed to a public git repo.
+**Across machines:** if this folder lives inside a Drive/Dropbox/iCloud-synced directory, the same memory is available on every machine with that sync client signed in — just re-run `pa-setup` there to point that machine's `AGENT_MEMORY_PATH` at the local sync path. The data itself is only as secure as that sync account (2FA recommended); this folder should never be committed to a public git repo.
 
 ## log.jsonl
 
@@ -19,11 +19,11 @@ Fields per entry:
 - `tags` — optional list of free-form keywords
 - `first_seen` — ISO date (`YYYY-MM-DD`) the entry was first logged
 - `mentions` — list of ISO dates the same idea was logged again; more mentions means it came up more often — a useful signal when planning or prioritizing
-- `forgotten` / `forgotten_at` — present only once an entry has been removed via `forget` (see below). The line stays for audit purposes but is excluded from normal reads.
+- `forgotten` / `forgotten_at` — present only once an entry has been removed via `pa-forget` (see below). The line stays for audit purposes but is excluded from normal reads.
 
 ## log-schema.json
 
-The registry of valid `field` values, each with a one-line `description`. Add new fields here directly, or through the `add-log-field` skill if you're an agent running the personal-assistant plugin.
+The registry of valid `field` values, each with a one-line `description`. Add new fields here directly, or through the `pa-add-log-field` skill if you're an agent running the personal-assistant plugin.
 
 ## scripts/log_tool.py
 

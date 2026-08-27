@@ -1,6 +1,6 @@
 {
   "name": "personal-assistant",
-  "version": "0.5.0",
+  "version": "0.6.1",
   "description": "Keeps a running record of how the owner thinks — ideas, reasoning, how they approach what they're building — in a shared, plugin-agnostic memory folder any agent can read (found via AGENT_MEMORY_PATH) and act from. Not an operations log — extensible with new log fields and capabilities over time.",
   "author": {
     "name": "Jordi"

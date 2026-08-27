@@ -1,5 +1,5 @@
 ---
-name: forget
+name: pa-forget
 description: Removes an entry from the shared memory log — because it was logged by mistake, is no longer relevant, or has been superseded. Triggers on "forget that", "remove that from the log", "delete that idea", "that's not relevant anymore, take it out", "unlog X".
 ---
 
@@ -9,7 +9,7 @@ Removes an entry from `log.jsonl` — by marking it forgotten, never by erasing 
 
 ## 1. Gate-check root
 
-Resolve `<agentMemoryPath>`: check the `AGENT_MEMORY_PATH` environment variable first, then `~/.agent-memory/root.json`. If neither is set, or the resolved folder is missing `log-schema.json`, stop and tell the user to run `setup` first.
+Resolve `<agentMemoryPath>`: check the `AGENT_MEMORY_PATH` environment variable first, then `~/.agent-memory/root.json`. If neither is set, or the resolved folder is missing `log-schema.json`, stop and tell the user to run `pa-setup` first.
 
 ## 2. Find the entry
 
@@ -27,7 +27,7 @@ Once confirmed:
 ```bash
 python3 <agentMemoryPath>/scripts/log_tool.py --file <agentMemoryPath>/log.jsonl forget --id "<id>"
 ```
-This marks the entry `forgotten: true` with a `forgotten_at` date — it stops appearing in normal `search` results and won't be matched for dedupe by `log` anymore, but the line itself stays in the file. Never hand-edit `log.jsonl` to delete a line directly.
+This marks the entry `forgotten: true` with a `forgotten_at` date — it stops appearing in normal `search` results and won't be matched for dedupe by `pa-log` anymore, but the line itself stays in the file. Never hand-edit `log.jsonl` to delete a line directly.
 
 ## 4. Return
 

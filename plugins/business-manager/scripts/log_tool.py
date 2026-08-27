@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
-"""CLI for personal-assistant's log.jsonl: add (with fuzzy dedupe) and search,
-operating on a local file so the model never has to read the whole log into
-context to append or dedupe an entry. Stdlib only, no dependencies."""
+"""CLI for a shared memory log.jsonl: add (with fuzzy dedupe), search, and
+forget, operating on a local file so the model never has to read the whole
+log into context to append or dedupe an entry. Stdlib only, no dependencies.
+Generic on purpose — this same file is seeded into any plugin's memory
+folder, so it carries no plugin-specific name or behavior."""
 import argparse
 import difflib
 import json
@@ -131,7 +133,7 @@ def cmd_forget(args):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="personal-assistant log tool")
+    parser = argparse.ArgumentParser(description="shared memory log tool")
     parser.add_argument("--file", required=True, help="path to a local log.jsonl copy")
     sub = parser.add_subparsers(dest="command", required=True)
 

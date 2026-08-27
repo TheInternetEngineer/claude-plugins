@@ -1,29 +1,29 @@
 {
-  "setup": {
+  "pa-setup": {
     "tier": "skill",
     "description": "Onboarding — locates/creates the shared agent memory folder (asking about existing/synced memory first) and collects required fields for every registered capability.",
     "required_fields": [],
     "depends_on": []
   },
-  "log": {
+  "pa-log": {
     "tier": "skill",
     "description": "Captures a structured entry (idea, task, observation, etc.) into the persistent log for later recall during planning and decision-making.",
     "required_fields": [],
     "depends_on": []
   },
-  "add-log-field": {
+  "pa-add-log-field": {
     "tier": "skill",
     "description": "Registers a new log field/category in the log schema so future log entries can use it.",
     "required_fields": [],
     "depends_on": []
   },
-  "add-func": {
+  "pa-add-func": {
     "tier": "skill",
     "description": "Adds a new capability to personal-assistant — registers it in modules.json and scaffolds its skill file.",
     "required_fields": [],
     "depends_on": []
   },
-  "forget": {
+  "pa-forget": {
     "tier": "skill",
     "description": "Soft-deletes an entry from the log (marks it forgotten rather than erasing it) when it's outdated, mistaken, or no longer relevant.",
     "required_fields": [],

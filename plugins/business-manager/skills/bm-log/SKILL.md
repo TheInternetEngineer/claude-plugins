@@ -1,5 +1,5 @@
 ---
-name: log
+name: bm-log
 description: Captures a structured entry (client preference, campaign learning, positioning decision, etc.) into the shared _business-memory log, so it can be recalled later during planning, client work, or content decisions — by this plugin or any other agent reading the same folder. Triggers on "log this client preference", "remember this for future campaigns", "add this to business memory", "log a positioning decision".
 ---
 
@@ -9,7 +9,7 @@ Appends one structured entry to the shared, persistent business-memory log. This
 
 ## 1. Gate-check root
 
-Resolve `<businessMemoryPath>`: check the `BUSINESS_MEMORY_PATH` environment variable first, then `~/.business-memory/root.json`. If neither is set, or the resolved folder is missing `log-schema.json`, stop and tell the user to run `setup` first.
+Resolve `<businessMemoryPath>`: check the `BUSINESS_MEMORY_PATH` environment variable first, then `~/.business-memory/root.json`. If neither is set, or the resolved folder is missing `log-schema.json`, stop and tell the user to run `bm-setup` first.
 
 ## 2. Distill from conversation
 
@@ -25,7 +25,7 @@ Show the user the distilled entry (content + field) before writing it, unless th
 Read `<businessMemoryPath>/log-schema.json` — the live, shared schema (not the plugin repo's copy, which is only the first-run seed).
 
 - If the requested field is registered, proceed.
-- If it isn't, tell the user it's not a registered field, offer to register it now via `add-log-field`, or suggest the closest existing field if they'd rather not create a new one.
+- If it isn't, tell the user it's not a registered field, offer to register it now via `bm-add-log-field`, or suggest the closest existing field if they'd rather not create a new one.
 
 ## 4. Add via the script — never hand-append
 

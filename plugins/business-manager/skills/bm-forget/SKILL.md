@@ -1,5 +1,5 @@
 ---
-name: forget
+name: bm-forget
 description: Removes an entry from the shared business-memory log — because it was logged by mistake, is outdated, or has been superseded (a client preference changed, a decision was reversed). Triggers on "forget that", "remove that from business memory", "that preference isn't true anymore, take it out", "unlog X".
 ---
 
@@ -9,7 +9,7 @@ Removes an entry from `log.jsonl` — by marking it forgotten, never by erasing 
 
 ## 1. Gate-check root
 
-Resolve `<businessMemoryPath>`: check the `BUSINESS_MEMORY_PATH` environment variable first, then `~/.business-memory/root.json`. If neither is set, or the resolved folder is missing `log-schema.json`, stop and tell the user to run `setup` first.
+Resolve `<businessMemoryPath>`: check the `BUSINESS_MEMORY_PATH` environment variable first, then `~/.business-memory/root.json`. If neither is set, or the resolved folder is missing `log-schema.json`, stop and tell the user to run `bm-setup` first.
 
 ## 2. Find the entry
 
@@ -27,7 +27,7 @@ Once confirmed:
 ```bash
 python3 <businessMemoryPath>/scripts/log_tool.py --file <businessMemoryPath>/log.jsonl forget --id "<id>"
 ```
-This marks the entry `forgotten: true` with a `forgotten_at` date — it stops appearing in normal `search` results and won't be matched for dedupe by `log` anymore, but the line itself stays in the file. Never hand-edit `log.jsonl` to delete a line directly.
+This marks the entry `forgotten: true` with a `forgotten_at` date — it stops appearing in normal `search` results and won't be matched for dedupe by `bm-log` anymore, but the line itself stays in the file. Never hand-edit `log.jsonl` to delete a line directly.
 
 ## 4. Return
 
