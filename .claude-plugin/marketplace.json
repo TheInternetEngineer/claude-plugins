@@ -11,6 +11,12 @@
       "version": "0.1.0",
       "source": "./plugins/business-manager",
       "description": "Runs the day-to-day operations of an AI education agency — content, campaigns, education/community, and client work — with persistent state on Google Drive."
+    },
+    {
+      "name": "personal-assistant",
+      "version": "0.1.0",
+      "source": "./plugins/personal-assistant",
+      "description": "Captures ideas, tasks, and observations into a persistent structured log you can recall when planning and making decisions — extensible with new log fields and capabilities over time."
     }
   ]
 }

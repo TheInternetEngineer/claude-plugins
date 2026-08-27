@@ -1,0 +1,26 @@
+{
+  "setup": {
+    "tier": "skill",
+    "description": "Onboarding — locates/creates the Drive personal-assistant root and collects required fields for every registered capability.",
+    "required_fields": [],
+    "depends_on": []
+  },
+  "log": {
+    "tier": "skill",
+    "description": "Captures a structured entry (idea, task, observation, etc.) into the persistent log for later recall during planning and decision-making.",
+    "required_fields": [],
+    "depends_on": []
+  },
+  "add-log-field": {
+    "tier": "skill",
+    "description": "Registers a new log field/category in the log schema so future log entries can use it.",
+    "required_fields": [],
+    "depends_on": []
+  },
+  "add-func": {
+    "tier": "skill",
+    "description": "Adds a new capability to personal-assistant — registers it in modules.json and scaffolds its skill file.",
+    "required_fields": [],
+    "depends_on": []
+  }
+}
