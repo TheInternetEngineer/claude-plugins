@@ -45,7 +45,11 @@ This plugin's own bookkeeping is namespaced by filename so other agents know to 
 
 ## 4. Pick up existing system instructions, if any
 
-Check the parent of `<businessMemoryPath>` for an existing instructions file — `CLAUDE.md`, `AGENTS.md`, or `README.md`, in that order of preference. If one exists and `context.json`'s `instructionsFile` isn't already set, read it and record its path there — this is shared, so any agent benefits, not just this plugin. If none exists, leave it `null`.
+Starting at the parent of `<businessMemoryPath>` and walking upward one directory at a time (stop at 6 levels up, or the filesystem/Drive root, whichever comes first), look for an instructions file — `CLAUDE.md`, `AGENTS.md`, or `README.md`, in that order of preference, at each level. Stop at the first one found — don't keep walking past it, and don't merge multiple. If one exists and `context.json`'s `instructionsFile` isn't already set, record its path there — this is shared, so any agent benefits, not just this plugin. If none exists within that range, leave it `null`.
+
+If the file found is an `AGENTS.md` and there's no sibling `CLAUDE.md` next to it, mention to the user that Claude Code only auto-loads `CLAUDE.md` — `AGENTS.md` alone won't be picked up automatically by a session working in that folder tree. Offer to create a one-line `CLAUDE.md` there containing `@AGENTS.md` to import it, so sessions get it without duplicating content.
+
+If nothing was found at all, mention that this plugin's `templates/SAMPLE-AGENTS.md` is a ready-to-fill starting point for one, and offer to copy it into place (as `AGENTS.md`, plus the `CLAUDE.md` import shim) rather than leaving the user to write one from scratch.
 
 ## 5. Read the capability registry
 

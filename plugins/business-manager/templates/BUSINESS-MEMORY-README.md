@@ -43,7 +43,7 @@ Always go through this script rather than hand-editing the file — hand-editing
 
 ## context.json
 
-`{"instructionsFile": "<path or null>"}` — if the parent of this folder has a `CLAUDE.md`, `AGENTS.md`, or `README.md` describing how the broader system/folder is organized, its path is recorded here so any agent can find it without re-discovering it.
+`{"instructionsFile": "<path or null>"}` — if a `CLAUDE.md`, `AGENTS.md`, or `README.md` describing how the broader system/folder is organized exists somewhere above this folder (checked level by level, closest first), its path is recorded here so any agent can find it without re-discovering it. Note: Claude Code only auto-loads `CLAUDE.md` into a session's context on its own — an `AGENTS.md` needs a one-line sibling `CLAUDE.md` containing `@AGENTS.md` to get the same treatment.
 
 ## Ownership convention
 
