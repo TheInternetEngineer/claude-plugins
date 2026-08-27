@@ -1,7 +1,7 @@
 {
   "setup": {
     "tier": "skill",
-    "description": "Onboarding — locates/creates the Drive personal-assistant root and collects required fields for every registered capability.",
+    "description": "Onboarding — locates/creates the local working folder and collects required fields for every registered capability.",
     "required_fields": [],
     "depends_on": []
   },

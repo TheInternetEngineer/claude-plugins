@@ -9,7 +9,7 @@ Appends one structured entry to the persistent log. This is the capture step —
 
 ## 1. Gate-check root
 
-Check that `<Drive>/_personal-assistant/config.json` exists. If it doesn't, stop and tell the user to run `setup` first.
+Read `~/.personal-assistant/root.json` for `workingFolder`. If it doesn't exist, or `<workingFolder>/_personal-assistant/config.json` doesn't exist, stop and tell the user to run `setup` first.
 
 ## 2. Distill from conversation
 
@@ -29,19 +29,17 @@ Read `log-schema.json` from this plugin's repo root.
 
 ## 4. Add via the script — never hand-append
 
-Do not download the log and read/rewrite it yourself, and do not compose the JSON line by hand. As the log grows that costs more tokens and more time on every single entry, and it can't dedupe. Instead, use `scripts/log_tool.py` (stdlib-only Python, no install step) — it does the read/dedupe/write locally so none of the existing entries pass through your context:
+Do not read the log and rewrite it yourself, and do not compose the JSON line by hand. As the log grows that costs more tokens and more time on every single entry, and it can't dedupe. Instead, use `scripts/log_tool.py` (stdlib-only Python, no install step) — it reads/dedupes/writes the file directly, so none of the existing entries pass through your context:
 
-1. Download `<Drive>/_personal-assistant/memory/log.jsonl` to a local scratch path (an empty local file if it doesn't exist on Drive yet).
-2. Run:
-   ```bash
-   python3 <plugin root>/scripts/log_tool.py --file <scratch path> add \
-     --field "<field>" --content "<content>" --tags "<comma,separated,tags>"
-   ```
-3. The script fuzzy-matches the new content against existing entries in the same field. Its one-line JSON result tells you what happened:
-   - `"action": "added"` — genuinely new entry, new `id`
-   - `"action": "bumped"` — matched an existing entry closely enough that it's treated as a repeat mention; today's date was appended to that entry's `mentions` list instead of creating a duplicate (this mention history is a future signal for how often an idea recurs, useful when planning)
-   - `"action": "already_current"` — matched an existing entry already mentioned today; nothing changed
-4. Upload the modified scratch file back to `<Drive>/_personal-assistant/memory/log.jsonl`, overwriting it.
+```bash
+python3 <plugin root>/scripts/log_tool.py --file <workingFolder>/_personal-assistant/memory/log.jsonl add \
+  --field "<field>" --content "<content>" --tags "<comma,separated,tags>"
+```
+
+The script fuzzy-matches the new content against existing entries in the same field and writes the file in place (creating it if it doesn't exist yet). Its one-line JSON result tells you what happened:
+- `"action": "added"` — genuinely new entry, new `id`
+- `"action": "bumped"` — matched an existing entry closely enough that it's treated as a repeat mention; today's date was appended to that entry's `mentions` list instead of creating a duplicate (this mention history is a future signal for how often an idea recurs, useful when planning)
+- `"action": "already_current"` — matched an existing entry already mentioned today; nothing changed
 
 ## 5. Return
 

@@ -41,8 +41,8 @@ Create `skills/<name>/SKILL.md` following the same shape as `log`:
 3. Gather-inputs section — what the invocation itself must supply
 4. Load-context section — any `depends_on` capability's output (e.g. `log.jsonl`) + its own `memory/<name>.md` for prior work
 5. Do-the-work section — **leave as a clearly marked placeholder** naming the actual task logic still to be written; don't invent it
-6. Save-and-log section — output to `outputs/<name>/`, append to `memory/<name>.md`
-7. Return section — show the result in chat plus the Drive path
+6. Save-and-log section — output to `<workingFolder>/_personal-assistant/outputs/<name>/`, append to `memory/<name>.md`
+7. Return section — show the result in chat plus the file path it was saved to
 
 ## 5. Report
 
