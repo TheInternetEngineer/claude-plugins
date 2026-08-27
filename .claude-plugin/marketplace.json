@@ -14,7 +14,7 @@
     },
     {
       "name": "personal-assistant",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "source": "./plugins/personal-assistant",
       "description": "Captures ideas, tasks, and observations into a persistent structured log you can recall when planning and making decisions — extensible with new log fields and capabilities over time."
     }
