@@ -1,0 +1,8 @@
+{
+  "write-email": {
+    "tier": "skill",
+    "description": "Writes a single email for a specific purpose (outreach, nurture, announcement, follow-up, campaign step).",
+    "required_fields": ["senderName", "businessName"],
+    "depends_on": []
+  }
+}

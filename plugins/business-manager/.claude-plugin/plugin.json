@@ -1,0 +1,9 @@
+{
+  "name": "business-manager",
+  "version": "0.1.0",
+  "description": "Runs the day-to-day operations of an AI education agency — content, campaigns, education/community, and client work — with persistent state on Google Drive.",
+  "author": {
+    "name": "Jordi"
+  },
+  "skills": "./skills/"
+}
