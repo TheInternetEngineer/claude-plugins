@@ -14,20 +14,22 @@ Not tied to Google Drive specifically. It's just a folder — plain local, or in
 Check, in order, stopping at the first hit:
 
 1. **Environment variable** — run `echo "$BUSINESS_MEMORY_PATH"`. If set and non-empty, that's the memory path.
-2. **Local pointer file** — read `~/.business-memory/root.json`. If it exists, it contains `{"businessMemoryPath": "<absolute path>"}`. This exists because a shell env var only becomes visible to *new* shells after step 3 persists it — this file is the reliable fallback until then.
+2. **Local pointer file** — read `~/.business-memory/root.json`. If it exists, it contains `{"businessMemoryPath": "<absolute path>"}`. This exists because a shell env var only becomes visible to *new* shells after it's persisted below — this file is the reliable fallback until then.
 3. **Neither found — first run.**
    a. Ask if a business-memory folder already exists somewhere (a previous setup, another machine, a synced folder they know the path to). If yes, use that path as-is (it should already have `log.jsonl`/`log-schema.json`; if it's empty, confirm that's intentional before treating it as fresh).
    b. If not, advise before asking for a path: a plain local folder only lives on this machine — it won't be there from another computer. A folder inside cloud-synced storage is reachable from anywhere that sync account is signed in. Recommend synced unless they're sure this machine is the only place this will ever be used.
    c. Ask for the absolute path. Expand `~`. Create a `_business-memory` subfolder inside it (unless they point straight at an existing `_business-memory` folder — use that as-is). Create directories as needed once confirmed.
 
-   Once resolved, persist the path two ways:
-   - Write `~/.business-memory/root.json` = `{"businessMemoryPath": "<path>"}` (effective immediately, this session).
-   - Idempotently append to the user's shell rc (`$SHELL` → `/bin/zsh`: `~/.zshrc`, `/bin/bash`: `~/.bashrc`; skip if `BUSINESS_MEMORY_PATH` is already exported there):
-     ```
-     # added by business-manager: business memory path
-     export BUSINESS_MEMORY_PATH="<path>"
-     ```
-     Tell the user this takes effect in new terminals/sessions, not the current one.
+**Regardless of which of the three resolved it**, before moving on, ensure the path is durably persisted — don't skip this just because branch 1 or 2 already found it:
+- If `~/.business-memory/root.json` doesn't exist yet or doesn't match the resolved path, write it: `{"businessMemoryPath": "<path>"}` (effective immediately, this session).
+- Check the user's shell rc (`$SHELL` → `/bin/zsh`: `~/.zshrc`, `/bin/bash`: `~/.bashrc`) for an existing `BUSINESS_MEMORY_PATH` export. If it's missing, append it idempotently:
+  ```
+  # added by business-manager: business memory path
+  export BUSINESS_MEMORY_PATH="<path>"
+  ```
+  If it's already there (matching or not), leave it alone — never duplicate or overwrite an existing export line.
+
+This closes a real gap: without it, a path resolved via the pointer file (branch 2) would never get the env var itself exported anywhere, indefinitely relying on the pointer-file fallback rather than ever actually setting `BUSINESS_MEMORY_PATH`. Only mention the "takes effect in new terminals, not this one" caveat to the user if you actually appended something this run.
 
 ## 2. Locate or create the business-memory folder's contents
 

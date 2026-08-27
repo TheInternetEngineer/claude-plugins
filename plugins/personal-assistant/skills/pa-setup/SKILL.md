@@ -16,7 +16,7 @@ The folder itself can be anything: a folder on the desktop, a project repo, or �
 Check, in order, stopping at the first hit:
 
 1. **Environment variable** — run `echo "$AGENT_MEMORY_PATH"` (or equivalent). If it's set and non-empty, that's the memory path.
-2. **Local pointer file** — read `~/.agent-memory/root.json`. If it exists, it contains `{"agentMemoryPath": "<absolute path>"}`. This exists because a shell env var only becomes visible to *new* shells after step 3 below persists it — this file is the reliable fallback for the current and any other Claude Code session in the meantime.
+2. **Local pointer file** — read `~/.agent-memory/root.json`. If it exists, it contains `{"agentMemoryPath": "<absolute path>"}`. This exists because a shell env var only becomes visible to *new* shells after it's persisted below — this file is the reliable fallback for the current and any other Claude Code session in the meantime.
 3. **Neither found — first run.** Don't jump straight to "where should I create it." Walk through this in order:
 
    a. **Ask if a memory already exists somewhere.** "Do you already have this set up somewhere — a previous setup, another computer, a synced folder you know the path to?" If yes, use that path as-is (it should already have `log.jsonl`/`log-schema.json`; if it's empty, confirm that's intentional before treating it as fresh).
@@ -25,14 +25,16 @@ Check, in order, stopping at the first hit:
 
    c. **Ask for the absolute path**, given that advice. Expand `~`. Create an `_agent-memory` subfolder inside whatever they give you (unless they point straight at an existing `_agent-memory` folder — then use it as-is). Create directories as needed once confirmed.
 
-   Once resolved, persist the path two ways so it's durable everywhere:
-   - Write `~/.agent-memory/root.json` = `{"agentMemoryPath": "<path>"}` (takes effect immediately, this session).
-   - Persist the env var for future shells/tools: detect the user's shell (`$SHELL` — `/bin/zsh` → `~/.zshrc`, `/bin/bash` → `~/.bashrc`) and, only if an `AGENT_MEMORY_PATH` export isn't already present in that file, append:
-     ```
-     # added by personal-assistant: agent memory path
-     export AGENT_MEMORY_PATH="<path>"
-     ```
-     Tell the user this takes effect in new terminals/sessions, not the current one.
+**Regardless of which of the three resolved it**, before moving on, ensure the path is durably persisted — don't skip this just because branch 1 or 2 already found it:
+- If `~/.agent-memory/root.json` doesn't exist yet or doesn't match the resolved path, write it: `{"agentMemoryPath": "<path>"}` (effective immediately, this session).
+- Detect the user's shell (`$SHELL` — `/bin/zsh` → `~/.zshrc`, `/bin/bash` → `~/.bashrc`) and check it for an existing `AGENT_MEMORY_PATH` export. If it's missing, append it idempotently:
+  ```
+  # added by personal-assistant: agent memory path
+  export AGENT_MEMORY_PATH="<path>"
+  ```
+  If it's already there, leave it alone — never duplicate or overwrite an existing export line.
+
+This closes a real gap: without it, a path resolved via the pointer file (branch 2) would never get the env var itself exported anywhere, indefinitely relying on the pointer-file fallback rather than ever actually setting `AGENT_MEMORY_PATH`. Only mention the "takes effect in new terminals, not this one" caveat to the user if you actually appended something this run.
 
 ## 2. Locate or create the memory folder's contents
 
