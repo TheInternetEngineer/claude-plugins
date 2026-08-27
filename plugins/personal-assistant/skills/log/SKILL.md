@@ -1,15 +1,15 @@
 ---
 name: log
-description: Captures a structured entry (idea, task, observation, etc.) into the personal assistant's persistent log, so it can be recalled later during planning, scheduling, or decision-making. Triggers on "log this idea", "add this to my log", "remember this for planning", "log an idea about X".
+description: Captures a structured entry (idea, task, observation, etc.) into the shared _agent-memory log, so it can be recalled later during planning, scheduling, or decision-making — by this plugin or any other agent reading the same folder. Triggers on "log this idea", "add this to my log", "remember this for planning", "log an idea about X".
 ---
 
 # Log
 
-Appends one structured entry to the persistent log. This is the capture step — recall happens later, when planning skills read the log back.
+Appends one structured entry to the shared, persistent log. This is the capture step — recall happens later, when planning skills (from this plugin or any other agent) read the log back.
 
 ## 1. Gate-check root
 
-Read `~/.personal-assistant/root.json` for `workingFolder`. If it doesn't exist, or `<workingFolder>/_personal-assistant/config.json` doesn't exist, stop and tell the user to run `setup` first.
+Read `~/.agent-memory/root.json` for `workingFolder`. If it doesn't exist, or `<workingFolder>/_agent-memory/` doesn't exist, stop and tell the user to run `setup` first.
 
 ## 2. Distill from conversation
 
@@ -22,17 +22,17 @@ Show the user the distilled entry (content + field) before writing it, unless th
 
 ## 3. Validate the field
 
-Read `log-schema.json` from this plugin's repo root.
+Read `<workingFolder>/_agent-memory/log-schema.json` — the live, shared schema (not the plugin repo's copy, which is only the first-run seed).
 
 - If the requested field is registered, proceed.
 - If it isn't, tell the user it's not a registered field, offer to register it now via `add-log-field`, or fall back to `idea` if they'd rather not create a new one.
 
 ## 4. Add via the script — never hand-append
 
-Do not read the log and rewrite it yourself, and do not compose the JSON line by hand. As the log grows that costs more tokens and more time on every single entry, and it can't dedupe. Instead, use `scripts/log_tool.py` (stdlib-only Python, no install step) — it reads/dedupes/writes the file directly, so none of the existing entries pass through your context:
+Do not read the log and rewrite it yourself, and do not compose the JSON line by hand. As the log grows that costs more tokens and more time on every single entry, and it can't dedupe. Use the copy of `log_tool.py` that lives inside the shared folder (not the plugin repo's copy) — this keeps the folder self-contained for other agents:
 
 ```bash
-python3 <plugin root>/scripts/log_tool.py --file <workingFolder>/_personal-assistant/memory/log.jsonl add \
+python3 <workingFolder>/_agent-memory/scripts/log_tool.py --file <workingFolder>/_agent-memory/log.jsonl add \
   --field "<field>" --content "<content>" --tags "<comma,separated,tags>"
 ```
 

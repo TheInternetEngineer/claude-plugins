@@ -1,57 +1,65 @@
 ---
 name: setup
-description: Onboarding for personal-assistant — locates or creates the local working folder that holds its data, and collects the required fields for every registered capability so they can activate. Triggers on "set up personal assistant", "run setup", "configure personal assistant", or first use of any other personal-assistant capability that reports missing config.
+description: Onboarding for personal-assistant — locates or creates the shared _agent-memory working folder, and collects the required fields for every registered capability so they can activate. Triggers on "set up personal assistant", "run setup", "configure personal assistant", or first use of any other personal-assistant capability that reports missing config.
 ---
 
 # Setup
 
-Establishes the one piece of state every other capability depends on: a **working folder** — an ordinary local directory (plain filesystem, no special API) — and its `config.json`.
+Establishes the one piece of state every other capability depends on: a **working folder** containing `_agent-memory/` — a shared, plugin-agnostic memory folder that any agent can read and write, not something owned by this plugin alone.
 
-The working folder can be anything: a folder on the desktop, a project repo, or a directory synced by Drive/Dropbox/iCloud desktop apps (in which case it just looks like a local folder here — no cloud connector needed). The user picks it; nothing about it is Drive-specific.
+The working folder itself can be anything: a folder on the desktop, a project repo, or a directory synced by Drive/Dropbox/iCloud desktop apps (in which case it just looks like a local folder here — no cloud connector needed). The user picks it; nothing about it is Drive-specific or personal-assistant-specific.
 
 ## 1. Find the working folder pointer
 
-Read `~/.personal-assistant/root.json` (a small pointer file in the user's home directory — it just says where the real data lives, since that location is user-chosen and can't be hardcoded).
+Read `~/.agent-memory/root.json` — a small, plugin-agnostic pointer file in the user's home directory. It just says where the real data lives, since that location is user-chosen and can't be hardcoded, and any agent following this same convention can find it the same way.
 
 - **Found:** it contains `{"workingFolder": "<absolute path>"}`. Use that path. Don't ask again.
-- **Not found:** this is first run. Ask the user for an absolute path to their working folder — mention it can be an existing folder (e.g. a Drive/Dropbox/iCloud-synced folder, so it's remotely backed for free) or a fresh empty one. Expand `~`. Create the folder if it doesn't exist and the user confirms. Write `~/.personal-assistant/root.json` with `{"workingFolder": "<path>"}`.
+- **Not found:** this is first run. Ask the user for an absolute path to their working folder — mention it can be an existing folder (e.g. a Drive/Dropbox/iCloud-synced folder, so it's remotely backed for free) or a fresh empty one. Expand `~`. Create the folder if it doesn't exist and the user confirms. Write `~/.agent-memory/root.json` with `{"workingFolder": "<path>"}`.
 
-## 2. Locate or create the personal-assistant root inside it
+## 2. Locate or create the shared memory folder
 
-- If `<workingFolder>/_personal-assistant/config.json` exists, read it — this is the existing config, don't recreate it.
-- Otherwise create `<workingFolder>/_personal-assistant/`, with `config.json` (`{"modules": {}, "instructionsFile": null}`) and a `memory/` subfolder.
+`<workingFolder>/_agent-memory/` is the shared surface — keep it plugin-agnostic. If it doesn't exist yet, create it with:
+- `log-schema.json` — copy this plugin's `log-schema.json` (repo root) as the seed. From now on `add-log-field` edits this copy, not the plugin repo's.
+- `scripts/log_tool.py` — copy this plugin's `scripts/log_tool.py`, so the folder is self-contained and usable by any agent even without this plugin installed.
+- `README.md` — copy this plugin's `templates/AGENT-MEMORY-README.md`.
+- `context.json` — `{"instructionsFile": null}` (filled in by step 4).
 
-## 3. Pick up existing system instructions, if any
+If `_agent-memory/` already exists, leave `log-schema.json`, `log.jsonl`, `README.md`, and `context.json` alone — never overwrite user data. Only refresh `scripts/log_tool.py` from the plugin repo if it's missing, or the user explicitly asks to update it.
 
-Check the top level of `<workingFolder>` (not `_personal-assistant/`, the folder itself) for an existing instructions file — `CLAUDE.md`, `AGENTS.md`, or `README.md`, in that order of preference. If one exists and `instructionsFile` isn't already set in `config.json`, read it for how the user's broader system/folder is organized, and record its relative path as `instructionsFile` in `config.json` so other capabilities can find it without re-discovering it. If none exists, leave `instructionsFile` as `null` — don't create one speculatively.
+## 3. Locate or create this plugin's own config
 
-## 4. Read the capability registry
+This plugin's own bookkeeping is namespaced by filename so other agents know to leave it alone: `<workingFolder>/_agent-memory/personal-assistant.config.json`. Read it if it exists; otherwise create it as `{"modules": {}}`.
+
+## 4. Pick up existing system instructions, if any
+
+Check the top level of `<workingFolder>` (not `_agent-memory/`, the folder itself) for an existing instructions file — `CLAUDE.md`, `AGENTS.md`, or `README.md`, in that order of preference. If one exists and `_agent-memory/context.json`'s `instructionsFile` isn't already set, read it for how the user's broader system/folder is organized, and record its relative path there — this is shared, so any agent benefits, not just this plugin. If none exists, leave it `null` — don't create one speculatively.
+
+## 5. Read the capability registry
 
 Read `modules.json` from this plugin's repo root — it lists every registered capability with its `required_fields` and `depends_on`.
 
-## 5. Collect only what's missing
+## 6. Collect only what's missing
 
 For each capability in `modules.json`:
-- Compare its `required_fields` against what's already in `config.json`.
+- Compare its `required_fields` against what's already in `personal-assistant.config.json`.
 - Skip fields already answered — never re-ask.
 - Batch the remaining questions to the user, grouped by capability, in one pass (don't interrogate one field at a time across many turns).
 
-## 6. Compute enabled state
+## 7. Compute enabled state
 
 A capability is `enabled: true` only if:
-- every field in its `required_fields` is present in `config.json`, **and**
+- every field in its `required_fields` is present in `personal-assistant.config.json`, **and**
 - every capability listed in its `depends_on` is itself `enabled: true`
 
-Write the full result back to `<workingFolder>/_personal-assistant/config.json`, preserving `instructionsFile`:
+Write the full result back to `<workingFolder>/_agent-memory/personal-assistant.config.json`:
 ```json
 {
-  "instructionsFile": "CLAUDE.md",
   "modules": {
     "log": { "enabled": true }
   }
 }
 ```
 
-## 7. Report
+## 8. Report
 
-Tell the user the working folder path, per capability whether it's enabled or disabled + exactly what's missing, and whether an instructions file was picked up.
+Tell the user: the working folder path, that `_agent-memory/` there is shared and any other agent can read `log.jsonl` from it directly, per-capability enabled/disabled status (+ exactly what's missing if disabled), and whether an instructions file was picked up.
