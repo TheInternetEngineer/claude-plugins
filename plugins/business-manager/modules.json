@@ -1,4 +1,16 @@
 {
+  "setup": {
+    "tier": "skill",
+    "description": "Onboarding — locates/creates the Drive business root and collects required fields for every registered capability.",
+    "required_fields": [],
+    "depends_on": []
+  },
+  "add-func": {
+    "tier": "skill",
+    "description": "Adds a new capability to business-manager — registers it in modules.json and scaffolds its skill file.",
+    "required_fields": [],
+    "depends_on": []
+  },
   "write-email": {
     "tier": "skill",
     "description": "Writes a single email for a specific purpose (outreach, nurture, announcement, follow-up, campaign step).",
