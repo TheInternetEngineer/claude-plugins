@@ -28,5 +28,11 @@
     "description": "Soft-deletes an entry from the log (marks it forgotten rather than erasing it) when it's outdated, mistaken, or no longer relevant.",
     "required_fields": [],
     "depends_on": []
+  },
+  "pa-recall": {
+    "tier": "skill",
+    "description": "Reads or searches the shared _agent-memory log and answers in plain language. Read-only.",
+    "required_fields": [],
+    "depends_on": []
   }
 }
